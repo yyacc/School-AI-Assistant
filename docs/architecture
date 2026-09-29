@@ -1,0 +1,496 @@
+# School AI Assistant — Architecture
+
+## Table of Contents
+
+1. [I. System Overview](#i-system-overview)
+   - [A. Purpose](#a-purpose)
+   - [B. Design Principles](#b-design-principles)
+2. [II. High-Level Architecture](#ii-high-level-architecture)
+   - [A. System Layers](#a-system-layers)
+   - [B. Data Flow](#b-data-flow)
+3. [III. Knowledge Architecture](#iii-knowledge-architecture)
+   - [A. Markdown Knowledge Base](#a-markdown-knowledge-base)
+   - [B. Knowledge Eligibility](#b-knowledge-eligibility)
+   - [C. Retrieval and Grounding](#c-retrieval-and-grounding)
+4. [IV. Authorization Architecture](#iv-authorization-architecture)
+   - [A. Permission Model](#a-permission-model)
+   - [B. Access Enforcement](#b-access-enforcement)
+   - [C. Protected Information](#c-protected-information)
+5. [V. External Data Integration](#v-external-data-integration)
+   - [A. Google Workspace](#a-google-workspace)
+   - [B. Documents and Spreadsheets](#b-documents-and-spreadsheets)
+6. [VI. AI Processing](#vi-ai-processing)
+   - [A. Assistant Layer](#a-assistant-layer)
+   - [B. Context Construction](#b-context-construction)
+   - [C. Response Generation](#c-response-generation)
+7. [VII. Data Boundaries](#vii-data-boundaries)
+   - [A. Knowledge Data](#a-knowledge-data)
+   - [B. Generated Data](#b-generated-data)
+   - [C. Protected Data](#c-protected-data)
+8. [VIII. Security Architecture](#viii-security-architecture)
+   - [A. Least Privilege](#a-least-privilege)
+   - [B. Credential Isolation](#b-credential-isolation)
+   - [C. Authorization Boundary](#c-authorization-boundary)
+9. [IX. Current Architecture](#ix-current-architecture)
+10. [X. Future Architecture](#x-future-architecture)
+11. [XI. Implementation Status](#xi-implementation-status)
+
+---
+
+# I. System Overview
+
+## A. Purpose
+
+The School AI Assistant is designed as a controlled, knowledge-grounded AI system for school-related workflows.
+
+Its architecture separates:
+
+- User interaction
+- Authorization
+- Knowledge retrieval
+- External data access
+- AI processing
+- Source citation
+
+The system is designed so that the language model is not treated as the authoritative source of institutional information.
+
+The institution and its internal information are intentionally anonymized in this public documentation.
+
+## B. Design Principles
+
+The architecture follows these principles:
+
+1. Ground responses in approved information.
+2. Apply authorization before exposing protected information.
+3. Keep generated content separate from authoritative knowledge.
+4. Keep credentials outside the public repository.
+5. Make source material traceable through citations.
+6. Separate AI reasoning from access-control decisions.
+7. Use least-privilege access wherever possible.
+
+---
+
+# II. High-Level Architecture
+
+## A. System Layers
+
+```text
+┌──────────────────────────────────────────┐
+│              User Interface              │
+└────────────────────┬─────────────────────┘
+                     │
+                     ▼
+┌──────────────────────────────────────────┐
+│             AI Assistant Layer           │
+└────────────────────┬─────────────────────┘
+                     │
+                     ▼
+┌──────────────────────────────────────────┐
+│        Authorization / Scope Layer       │
+└────────────────────┬─────────────────────┘
+                     │
+                     ▼
+┌──────────────────────────────────────────┐
+│          Retrieval / Knowledge Layer     │
+└───────────────┬──────────────────┬───────┘
+                │                  │
+                ▼                  ▼
+       ┌────────────────┐  ┌────────────────┐
+       │ Approved       │  │ External       │
+       │ Knowledge      │  │ Data Sources   │
+       └────────────────┘  └────────────────┘
+                │                  │
+                └────────┬─────────┘
+                         ▼
+                ┌─────────────────┐
+                │ Context / Source│
+                │ Construction    │
+                └────────┬────────┘
+                         ▼
+                ┌─────────────────┐
+                │ AI Response     │
+                │ Generation      │
+                └────────┬────────┘
+                         ▼
+                ┌─────────────────┐
+                │ Response +      │
+                │ Citations       │
+                └─────────────────┘
+```
+
+## B. Data Flow
+
+The intended high-level flow is:
+
+```text
+User Request
+     │
+     ▼
+Request Interpretation
+     │
+     ▼
+Authorization / Scope Check
+     │
+     ▼
+Retrieve Authorized Sources
+     │
+     ▼
+Construct AI Context
+     │
+     ▼
+Generate Response
+     │
+     ▼
+Attach Source Citations
+     │
+     ▼
+Return Response
+```
+
+The authorization and source-selection layers establish the boundary for information that may enter the AI context.
+
+---
+
+# III. Knowledge Architecture
+
+## A. Markdown Knowledge Base
+
+The primary knowledge representation uses Markdown files organized within a controlled knowledge repository.
+
+This provides:
+
+- Human-readable source material
+- Simple organization
+- Version control
+- Explicit knowledge inclusion
+- Separation from generated application content
+
+The knowledge repository functions as a curated source layer rather than an unrestricted document collection.
+
+## B. Knowledge Eligibility
+
+A file should not automatically become AI knowledge simply because the system can access it.
+
+Knowledge eligibility is an explicit architectural concept.
+
+```text
+File
+ │
+ ├── Approved as Knowledge ──► Retrieval System
+ │
+ ├── Generated / Temporary ──► Not Automatically Knowledge
+ │
+ ├── Protected ──────────────► Authorization Required
+ │
+ └── No Access ──────────────► Excluded
+```
+
+This prevents accidental expansion of the assistant's knowledge scope.
+
+## C. Retrieval and Grounding
+
+When a user asks a question, the system retrieves relevant authorized source material before generating the response.
+
+The retrieved material becomes part of the model context.
+
+The model can then:
+
+- Interpret source material
+- Summarize information
+- Answer questions
+- Combine information from multiple authorized sources
+- Identify supporting sources
+
+The model is not treated as a replacement for the underlying source documents.
+
+---
+
+# IV. Authorization Architecture
+
+## A. Permission Model
+
+The system defines four primary permission levels:
+
+| Permission | Meaning |
+|---|---|
+| `READ_ONLY` | Information can be read but not modified |
+| `READ_WRITE` | Authorized information can be read and modified |
+| `PROTECTED` | Restricted information requiring additional authorization |
+| `NO_ACCESS` | Information must not be accessed |
+
+## B. Access Enforcement
+
+Authorization should be enforced outside the language model wherever possible.
+
+The intended pattern is:
+
+```text
+User
+ │
+ ▼
+Identity / Role
+ │
+ ▼
+Permission Evaluation
+ │
+ ├── Authorized ──► Retrieve
+ │
+ └── Unauthorized ─► Deny
+```
+
+The language model should not be the sole mechanism used to determine whether a user can access a resource.
+
+## C. Protected Information
+
+The architecture recognizes categories of information that may require stronger protection in a school environment.
+
+Examples include:
+
+- Student records
+- Individual education information
+- Disciplinary information
+- Health-related information
+- Personnel records
+- Legal information
+- Restricted administrative information
+
+No real protected institutional records are included in the public repository.
+
+---
+
+# V. External Data Integration
+
+## A. Google Workspace
+
+The system is designed to integrate with authorized Google Workspace resources.
+
+Potential resources include:
+
+- Google Drive
+- Google Docs
+- Google Sheets
+
+Authentication is handled through appropriate authorization mechanisms rather than hard-coded credentials.
+
+## B. Documents and Spreadsheets
+
+External resources can have different roles within the system.
+
+```text
+External File
+     │
+     ├── Approved Knowledge
+     │
+     ├── Working Document
+     │
+     ├── Generated Output
+     │
+     └── Protected Resource
+```
+
+These categories should not automatically be treated as interchangeable.
+
+In particular, a document created by the assistant should not automatically become authoritative knowledge.
+
+---
+
+# VI. AI Processing
+
+## A. Assistant Layer
+
+The assistant provides the conversational interface between users and the underlying information system.
+
+Its responsibilities include:
+
+- Understanding requests
+- Requesting relevant authorized information
+- Interpreting retrieved information
+- Generating responses
+- Providing source references
+
+## B. Context Construction
+
+The AI context should be constructed from information the user is authorized to access.
+
+```text
+User Request
+     │
+     ▼
+Authorization
+     │
+     ▼
+Authorized Sources
+     │
+     ▼
+Relevant Content
+     │
+     ▼
+AI Context
+```
+
+This creates a boundary between institutional data available to the system and information actually supplied to the model.
+
+## C. Response Generation
+
+The model uses the constructed context to produce a response.
+
+Where an answer depends on institutional information, the response should identify the relevant source material.
+
+When sufficient authorized information is unavailable, the system should avoid presenting unsupported information as an institutional fact.
+
+---
+
+# VII. Data Boundaries
+
+## A. Knowledge Data
+
+Knowledge data consists of information explicitly approved for retrieval and AI use.
+
+Examples may include:
+
+- Policies
+- Procedures
+- Administrative references
+- Approved instructional information
+- Other institutional documentation
+
+## B. Generated Data
+
+Generated documents and responses are not automatically treated as authoritative knowledge.
+
+This prevents generated content from becoming source material without appropriate review.
+
+## C. Protected Data
+
+Protected data exists behind additional authorization boundaries.
+
+The intended architecture prevents protected information from becoming general-purpose AI context merely because it exists within a connected storage system.
+
+---
+
+# VIII. Security Architecture
+
+## A. Least Privilege
+
+The system should provide users and components with only the permissions necessary for their intended operations.
+
+This reduces unnecessary access to institutional resources.
+
+## B. Credential Isolation
+
+Credentials, access tokens, private keys, OAuth secrets, and other authentication material must remain outside the public repository.
+
+Environment-specific configuration should use appropriate secret-management mechanisms rather than embedding secrets in source files.
+
+## C. Authorization Boundary
+
+Authorization is treated as a system-level concern.
+
+The architecture should not depend exclusively on instructions such as:
+
+```text
+"Do not show this file to unauthorized users."
+```
+
+Instead, the system should restrict retrieval and access before sensitive information reaches the model context.
+
+---
+
+# IX. Current Architecture
+
+The current architecture can be summarized as:
+
+```text
+                    User
+                      │
+                      ▼
+              ┌───────────────┐
+              │ AI Assistant  │
+              └───────┬───────┘
+                      │
+                      ▼
+              ┌───────────────┐
+              │ Authorization │
+              └───────┬───────┘
+                      │
+             ┌────────┴────────┐
+             ▼                 ▼
+      Markdown Knowledge   External Sources
+             │                 │
+             └────────┬────────┘
+                      ▼
+                Retrieval
+                      │
+                      ▼
+               AI Context
+                      │
+                      ▼
+             Grounded Response
+                      │
+                      ▼
+                  Citations
+```
+
+The implementation continues to evolve, so individual components may change as development progresses.
+
+---
+
+# X. Future Architecture
+
+Future development may introduce specialized AI components while preserving the same authorization and knowledge boundaries.
+
+A possible high-level direction is:
+
+```text
+                         User
+                           │
+                           ▼
+                    Orchestrator
+                           │
+             ┌─────────────┼─────────────┐
+             ▼             ▼             ▼
+         Retrieval      Document      Verification
+           Agent        Agent           Agent
+             │             │             │
+             └─────────────┼─────────────┘
+                           ▼
+                    Authorization
+                           │
+                           ▼
+                    Approved Context
+                           │
+                           ▼
+                    Response Layer
+```
+
+Potential specialized responsibilities include:
+
+- Knowledge retrieval
+- Document processing
+- Knowledge organization
+- Administrative workflows
+- Response verification
+
+This represents a future architectural direction rather than a claim that every component is currently implemented.
+
+The authorization boundary remains central regardless of how the AI components evolve.
+
+---
+
+# XI. Implementation Status
+
+| Component | Status |
+|---|---|
+| Knowledge-grounded architecture | Established |
+| Markdown knowledge model | Established |
+| Permission model | Established |
+| Protected-data concept | Established |
+| File citation concept | Established |
+| Google Workspace integration | In development |
+| Expanded agent coordination | Planned |
+| Specialized retrieval/document agents | Planned |
+| Advanced verification workflows | Planned |
+
+Implementation status may change as development progresses.
+
+Public documentation intentionally avoids exposing private institutional information, credentials, internal identifiers, or detailed operational security configurations.
