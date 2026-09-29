@@ -1,168 +1,172 @@
-School AI Assistant
+# School AI Assistant
 
 A school-focused AI assistant designed to provide grounded, permission-aware access to institutional knowledge and documents.
 
-The system is designed around a controlled knowledge base rather than unrestricted web-based generation. Its purpose is to help authorized users retrieve and work with school information while maintaining boundaries around protected and restricted data.
-
-⸻
-
-Table of Contents
-
-1. I. Overview
-    * A. Project Description
-    * B. Project Goals
-    * C. Current Status
-2. II. System Architecture
-    * A. High-Level Architecture
-    * B. Core System Roles
-3. III. Knowledge System
-    * A. Markdown-Based Knowledge
-    * B. Grounded Responses
-    * C. File Citations
-4. IV. Access Control
-    * A. Permission Levels
-    * B. Protected Information
-    * C. Authorization-Aware Responses
-5. V. External Integrations
-    * A. Google Workspace
-    * B. Document and Spreadsheet Data
-6. VI. AI System
-    * A. Assistant Responsibilities
-    * B. Knowledge Boundaries
-7. VII. Security Principles
-8. VIII. Development Status
-9. IX. Future Direction
-    * A. Expanded Knowledge Operations
-    * B. Improved Agent Coordination
-10. X. Technologies
-11. XI. Documentation
-
-⸻
-
-I. Overview
-
-A. Project Description
-
-School AI Assistant is a knowledge-grounded AI system designed for use within a school environment.
-
-The system provides an interface for authorized users to interact with institutional knowledge while maintaining explicit boundaries between accessible, protected, and restricted information.
-
-Rather than treating the AI model as the source of truth, the system is designed to ground responses in approved institutional documents.
+The system is designed around controlled knowledge sources rather than unrestricted AI generation. Its goal is to help authorized users retrieve and work with institutional information while maintaining boundaries around protected and restricted data.
 
 The institution using the system is intentionally not identified in this public repository.
 
-B. Project Goals
+---
 
-The project is designed around several goals:
+## Table of Contents
 
-* Provide useful AI-assisted access to institutional knowledge
-* Ground responses in approved source material
-* Provide citations to supporting files
-* Respect user permissions
-* Separate general knowledge from protected information
-* Prevent unauthorized access to restricted records
-* Support structured document and spreadsheet workflows
-* Maintain a clear boundary between AI reasoning and authoritative source data
+1. [I. Overview](#i-overview)
+   - [A. Project Description](#a-project-description)
+   - [B. Project Goals](#b-project-goals)
+   - [C. Current Status](#c-current-status)
+2. [II. System Architecture](#ii-system-architecture)
+   - [A. High-Level Model](#a-high-level-model)
+   - [B. System Roles](#b-system-roles)
+3. [III. Knowledge System](#iii-knowledge-system)
+   - [A. Knowledge Sources](#a-knowledge-sources)
+   - [B. Grounded Responses](#b-grounded-responses)
+   - [C. Source Citations](#c-source-citations)
+4. [IV. Access Control](#iv-access-control)
+   - [A. Permission Levels](#a-permission-levels)
+   - [B. Protected Information](#b-protected-information)
+   - [C. Authorization-Aware Retrieval](#c-authorization-aware-retrieval)
+5. [V. External Integrations](#v-external-integrations)
+   - [A. Google Workspace](#a-google-workspace)
+   - [B. Documents and Spreadsheets](#b-documents-and-spreadsheets)
+6. [VI. AI Responsibilities](#vi-ai-responsibilities)
+   - [A. Assistant Functions](#a-assistant-functions)
+   - [B. Knowledge Boundaries](#b-knowledge-boundaries)
+7. [VII. Security Principles](#vii-security-principles)
+8. [VIII. Development Status](#viii-development-status)
+9. [IX. Future Direction](#ix-future-direction)
+   - [A. Knowledge Operations](#a-knowledge-operations)
+   - [B. Agent Coordination](#b-agent-coordination)
+10. [X. Technologies](#x-technologies)
+11. [XI. Documentation](#xi-documentation)
 
-C. Current Status
+---
 
-Status: Active development
+# I. Overview
 
-The project has an established architecture for:
+## A. Project Description
 
-* Knowledge-grounded AI assistance
-* Markdown-based knowledge storage
-* Permission-aware retrieval
-* File citations
-* Protected information boundaries
-* Google Workspace integration
-* Controlled document and spreadsheet workflows
+School AI Assistant is a knowledge-grounded AI system designed for school-related workflows.
+
+The system provides an interface through which authorized users can interact with institutional knowledge while maintaining explicit boundaries between accessible, protected, and restricted information.
+
+The project is designed around the principle that institutional information should come from approved source material rather than being treated as knowledge generated solely by the language model.
+
+## B. Project Goals
+
+The project is designed to:
+
+- Provide AI-assisted access to institutional knowledge
+- Ground responses in approved source material
+- Provide citations to supporting files
+- Respect user permissions
+- Separate general knowledge from protected information
+- Prevent unauthorized access to restricted records
+- Support controlled document and spreadsheet workflows
+- Maintain a clear boundary between source information and generated content
+
+## C. Current Status
+
+**Status: Active development**
+
+The project has established the core concepts for:
+
+- Knowledge-grounded AI assistance
+- Markdown-based knowledge management
+- Permission-aware information access
+- File citations
+- Protected information boundaries
+- Google Workspace integration
+- Controlled document and spreadsheet workflows
 
 The system continues to be developed and tested as a private project.
 
-⸻
+---
 
-II. System Architecture
+# II. System Architecture
 
-A. High-Level Architecture
+## A. High-Level Model
+
+The system separates the major responsibilities involved in providing grounded AI assistance:
+
+```text
                     User
                       │
                       ▼
-              ┌──────────-────┐
+              ┌───────────────┐
               │ AI Assistant  │
               └───────┬───────┘
                       │
-             Authorization Check
+                      ▼
+              ┌───────────────┐
+              │ Authorization │
+              │    Layer      │
+              └───────┬───────┘
                       │
                       ▼
               ┌───────────────┐
-              │ Knowledge /   │
-              │ Retrieval     │
-              │ Layer         │
+              │   Knowledge   │
+              │ / Retrieval   │
               └───────┬───────┘
                       │
-          ┌───────────┴───────────┐
-          ▼                       ▼
-   Approved Knowledge       Protected Data
-      Sources              Access-Controlled
-          │                       │
-          └───────────┬───────────┘
+             ┌────────┴────────┐
+             ▼                 ▼
+      Approved Sources   External Sources
+             │                 │
+             └────────┬────────┘
                       ▼
               Grounded Response
                       │
                       ▼
-                File Citations
+                  Citations
+```
 
-The architecture separates the AI assistant from the underlying knowledge sources and access-control mechanisms.
+## B. System Roles
 
-The model is not intended to independently determine whether a user should have access to protected information.
+### A. AI Assistant
 
-B. Core System Roles
+Provides the conversational interface and processes information made available through the system.
 
-A. AI Assistant
+### B. Knowledge Layer
 
-Provides the conversational interface and processes authorized information.
+Provides approved institutional source material that can be retrieved and used to ground responses.
 
-B. Knowledge Layer
+### C. Authorization Layer
 
-Provides approved source material that can be retrieved and used to ground responses.
+Controls access to information according to defined permissions.
 
-C. Authorization Layer
+### D. External Data Layer
 
-Determines which categories of information a user is permitted to access.
+Provides controlled access to supported external resources such as documents and spreadsheets.
 
-D. External Data Layer
+---
 
-Provides controlled access to supported external documents, spreadsheets, and other institutional resources.
+# III. Knowledge System
 
-⸻
+## A. Knowledge Sources
 
-III. Knowledge System
+The system uses structured knowledge sources, primarily Markdown-based information organized within a controlled knowledge repository.
 
-A. Markdown-Based Knowledge
+This allows knowledge to be:
 
-The primary knowledge architecture uses structured Markdown files.
+- Human-readable
+- Organized
+- Reviewed
+- Updated independently of model training
+- Explicitly included in the AI knowledge system
 
-This provides a human-readable knowledge base that can be:
+Not every file accessible to the broader system is automatically considered AI knowledge.
 
-* Organized into folders
-* Reviewed by administrators
-* Version controlled
-* Updated without retraining the model
-* Retrieved by the assistant
+## B. Grounded Responses
 
-The knowledge base is intended to contain information that has been explicitly approved for AI use.
+The assistant is designed to prioritize information retrieved from approved knowledge sources.
 
-B. Grounded Responses
+The general workflow is:
 
-The assistant is designed to prioritize information retrieved from the approved knowledge base.
-
-The intended response flow is:
-
+```text
 User Question
      │
      ▼
-Permission / Scope Check
+Authorization / Scope Check
      │
      ▼
 Knowledge Retrieval
@@ -175,98 +179,109 @@ AI Processing
      │
      ▼
 Grounded Response
+```
 
-This reduces reliance on unsupported model-generated information when authoritative institutional material is available.
+This is intended to reduce unsupported responses when authoritative institutional information is available.
 
-C. File Citations
+## C. Source Citations
 
-Responses can identify the source files used to support an answer.
+The system is designed to identify the source files used to support an answer.
 
-Citations provide users with a way to trace generated information back to the underlying institutional source.
+This allows users to trace generated information back to the underlying institutional material.
 
-⸻
+---
 
-IV. Access Control
+# IV. Access Control
 
-A. Permission Levels
+## A. Permission Levels
 
-The system uses defined access levels for controlling knowledge availability:
+The system uses four defined permission levels:
 
-Level-----------Purpose
-READ_ONLY-------Information may be accessed but not modified
-READ_WRITE------Authorized information may be read and modified
-PROTECTED-------Restricted information requiring additional authorization
-NO_ACCESS-------Information must not be accessed
+| Level | Purpose |
+|---|---|
+| `READ_ONLY` | Information may be accessed but not modified |
+| `READ_WRITE` | Authorized information may be read and modified |
+| `PROTECTED` | Restricted information requiring additional authorization |
+| `NO_ACCESS` | Information must not be accessed |
 
-These permissions are part of the system’s security boundary rather than merely instructions to the language model.
+## B. Protected Information
 
-B. Protected Information
-
-The architecture recognizes that school environments may contain information requiring stronger access controls.
+The architecture recognizes that school environments can contain information requiring additional protection.
 
 Examples include:
 
-* Student records
-* Individual education information
-* Disciplinary records
-* Health-related information
-* Personnel information
-* Legal or administrative information
+- Student records
+- Individual education information
+- Disciplinary records
+- Health-related information
+- Personnel information
+- Legal information
+- Restricted administrative information
 
-Sensitive institutional information should not be treated as general AI knowledge.
+Real protected institutional records are not included in this public repository.
 
-C. Authorization-Aware Responses
+## C. Authorization-Aware Retrieval
 
-The system is designed so that authorization affects what information can be retrieved and used.
+Access permissions are intended to affect what information can be retrieved and used by the assistant.
 
-The goal is to prevent a user from obtaining restricted information simply by phrasing a request differently.
+The system should not rely solely on the language model to decide whether a user is allowed to access restricted information.
 
-⸻
+---
 
-V. External Integrations
+# V. External Integrations
 
-A. Google Workspace
+## A. Google Workspace
 
-The system is designed to work with supported Google Workspace resources through controlled authentication and access.
+The system is designed to work with authorized Google Workspace resources.
 
-This can provide access to approved institutional:
+Supported resource types include:
 
-* Google Drive
-* Google Docs
-* Google Sheets
+- Google Drive
+- Google Docs
+- Google Sheets
 
-B. Document and Spreadsheet Data
+## B. Documents and Spreadsheets
 
-External documents and spreadsheets can serve as controlled information sources when explicitly made available to the system.
+External files can have different roles within the system.
 
-The architecture distinguishes between:
+For example:
 
-* Files available as knowledge
-* Files created by the assistant
-* Files that should remain outside the knowledge base
-* Protected files requiring additional authorization
+```text
+External File
+     │
+     ├── Approved Knowledge
+     │
+     ├── Working File
+     │
+     ├── Generated Output
+     │
+     └── Protected Resource
+```
 
-This separation helps prevent newly generated documents from automatically becoming authoritative knowledge.
+These categories are intentionally kept separate.
 
-⸻
+A document created by the assistant should not automatically become authoritative knowledge.
 
-VI. AI System
+---
 
-A. Assistant Responsibilities
+# VI. AI Responsibilities
+
+## A. Assistant Functions
 
 The assistant is intended to:
 
-* Answer questions using authorized knowledge
-* Retrieve relevant institutional information
-* Cite supporting sources
-* Assist with document-based workflows
-* Respect information boundaries
-* Help users interact with approved school resources
+- Answer questions using authorized information
+- Retrieve relevant institutional information
+- Cite supporting sources
+- Assist with document-based workflows
+- Respect information boundaries
+- Help users interact with approved resources
 
-B. Knowledge Boundaries
+## B. Knowledge Boundaries
 
 The system distinguishes between approved knowledge and temporary or generated content.
 
+```text
 Approved Knowledge
        │
        ▼
@@ -277,103 +292,104 @@ AI Context
        │
        ▼
 Grounded Response
+```
 
 Generated content does not automatically become part of the knowledge base.
 
 This helps prevent generated information from silently becoming an authoritative source.
 
-⸻
+---
 
-VII. Security Principles
+# VII. Security Principles
 
-The system is designed around several security principles:
+The project follows several core security principles:
 
-A. Least-Privilege Access
+### A. Least Privilege
 
-Users should receive only the information and operations required for their authorized role.
+Users and system components should receive only the permissions required for their intended operations.
 
-B. Explicit Knowledge Sources
+### B. Explicit Knowledge Sources
 
-Information should be intentionally designated as usable knowledge rather than automatically ingesting everything available to the system.
+Information should be intentionally designated as usable AI knowledge.
 
-C. Protected Boundaries
+### C. Protected Boundaries
 
 Sensitive information should remain behind explicit access controls.
 
-D. Separation of Concerns
+### D. Separation of Responsibilities
 
-The AI model should not be the sole enforcement mechanism for authorization.
+Authorization should not depend solely on instructions given to the language model.
 
-E. Credential Isolation
+### E. Credential Isolation
 
-Credentials and authentication secrets should remain outside the public repository and should not be embedded in source code or documentation.
+Credentials, access tokens, private keys, and other secrets should remain outside the public repository.
 
-⸻
+---
 
-VIII. Development Status
+# VIII. Development Status
 
-The project currently has an established architecture for:
+The project currently has established work around:
 
-* Knowledge storage
-* Retrieval
-* Source citations
-* Permission levels
-* Protected information boundaries
-* External document access
-* Controlled AI interaction
+- Knowledge storage
+- Knowledge retrieval
+- Source citations
+- Permission levels
+- Protected information boundaries
+- External document access
+- AI-assisted interaction
 
-Implementation details continue to evolve as the system is developed and tested.
+Implementation continues to evolve as the system is developed and tested.
 
-Public documentation intentionally describes the architecture at a high level and does not expose private institutional information or credentials.
+Public documentation intentionally avoids exposing private institutional information, credentials, internal identifiers, or sensitive operational details.
 
-⸻
+---
 
-IX. Future Direction
+# IX. Future Direction
 
-A. Expanded Knowledge Operations
+## A. Knowledge Operations
 
 Future development may expand:
 
-* Knowledge organization
-* Retrieval accuracy
-* Source verification
-* Document workflows
-* Administrative tools
-* Permission management
+- Knowledge organization
+- Retrieval accuracy
+- Source verification
+- Document workflows
+- Administrative tools
+- Permission management
 
-B. Improved Agent Coordination
+## B. Agent Coordination
 
 The system may eventually use specialized AI components for different responsibilities while maintaining centralized authorization and knowledge boundaries.
 
-Potential responsibilities could include:
+Potential responsibilities include:
 
-* Retrieval
-* Document processing
-* Knowledge organization
-* Administrative workflows
-* Response verification
+- Retrieval
+- Document processing
+- Knowledge organization
+- Administrative workflows
+- Response verification
 
-These components are planned directions rather than claims about currently implemented functionality.
+These are planned directions and are not presented as currently implemented functionality.
 
-⸻
+---
 
-X. Technologies
+# X. Technologies
 
-The project currently involves technologies including:
+The project involves technologies including:
 
-* Large Language Models
-* Markdown
-* Obsidian-based knowledge management
-* Python
-* Google Workspace
-* Google Drive
-* Google Docs
-* Google Sheets
-* OAuth-based authentication
-* Agent-based AI workflows
+- Large Language Models
+- Markdown
+- Obsidian
+- Python
+- Google Workspace
+- Google Drive
+- Google Docs
+- Google Sheets
+- OAuth
+- Agent-based AI workflows
 
-⸻
+---
 
-XI. Documentation
+# XI. Documentation
 
 Detailed technical architecture is maintained in a separate architecture documentation file within the project.
